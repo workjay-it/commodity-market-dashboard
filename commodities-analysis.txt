@@ -1,0 +1,19 @@
+commodities-analysis/
+|
+├── data/
+│   ├── raw/
+│   │   └── commodities.xlsx
+│   ├── processed/
+│
+├── notebooks/
+│   └── 01_exploration.ipynb
+│
+├── scripts/
+│   ├── load_to_db.py
+│   └── analysis_queries.sql
+│
+├── app/
+│   └── dashboard.py
+│
+├── requirements.txt
+└── README.md

@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Databases
+*.duckdb
+
+# Streamlit
+.streamlit/
+
+# Conda / venv
+env/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
