@@ -1,19 +1,15 @@
 import streamlit as st
 import duckdb
 import pandas as pd
-from pathlib import Path
 
 st.set_page_config(page_title="Commodity Dashboard", layout="wide")
 
-DB_PATH = Path(__file__).resolve().parents[1] / "Analysis" / "commodities.duckdb"
-
-if not DB_PATH.exists():
-    st.error(f"Database not found at {DB_PATH}")
-    st.stop()
-
 @st.cache_resource
 def get_connection():
-    return duckdb.connect(DB_PATH, read_only=True)
+    conn = duckdb.connect(database=":memory:")
+    df = pd.read_csv("commodities_dataset.csv")
+    conn.execute("CREATE TABLE commodity_prices AS SELECT * FROM df")
+    return conn
 
 conn = get_connection()
 
@@ -56,4 +52,5 @@ df = load_price_data(commodity)
 df = df.set_index("Date")
 
 st.line_chart(df[["Close", "ma_30", "ma_90"]])
+
 
