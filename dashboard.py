@@ -7,11 +7,31 @@ st.set_page_config(page_title="Commodity Dashboard", layout="wide")
 @st.cache_resource
 def get_connection():
     conn = duckdb.connect(database=":memory:")
-    df = pd.read_csv("commodities_dataset.csv")
-    conn.execute("CREATE TABLE commodity_prices AS SELECT * FROM df")
+
+    df = pd.read_csv("commodities_dataset.csv", parse_dates=["Date"])
+
+    # Keep only Close columns
+    close_cols = [c for c in df.columns if "('Close'" in c]
+
+    long_df = df.melt(
+        id_vars=["Date"],
+        value_vars=close_cols,
+        var_name="Commodity",
+        value_name="Close"
+    )
+
+    # Clean commodity names
+    long_df["Commodity"] = (
+        long_df["Commodity"]
+        .str.replace("_\\('Close',.*\\)", "", regex=True)
+        .str.replace("_", " ")
+    )
+
+    conn.execute("CREATE TABLE commodity_prices AS SELECT * FROM long_df")
     return conn
 
 conn = get_connection()
+
 
 @st.cache_data
 def load_commodities():
@@ -52,5 +72,6 @@ df = load_price_data(commodity)
 df = df.set_index("Date")
 
 st.line_chart(df[["Close", "ma_30", "ma_90"]])
+
 
 
